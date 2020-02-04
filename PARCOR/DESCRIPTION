@@ -1,0 +1,11 @@
+Package: PARCOR
+Type: Package
+Title: Bayesian PARCOR model
+Version: 1.0-6
+Date: 2019-01-10
+Author: Wenjie Zhao
+Description: Provides routines for Kalman filtering and smoothing, and Bayesian analysis of Dynamic Linear Models under partial autocorrelation domain.
+License: GPL (>= 2)
+Depends: snowfall (>= 1.84-6.1)
+Imports: Rcpp (>= 1.0.1)
+LinkingTo: Rcpp, RcppArmadillo
