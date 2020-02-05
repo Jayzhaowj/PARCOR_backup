@@ -40,15 +40,15 @@ draw.density <- function(phi, SIGMA, start = 0.001, end = 0.499, interval = 0.01
     }else if(wind){
       x_coord <- seq(0, 1, length.out = n_t - 2*P)
       y_coord <- w 
-      names <- c(bquote('M'['X']), bquote('M'['Y']), 
+      names <- list(bquote('M'['X']), bquote('M'['Y']), 
                  bquote('S'['X']), bquote('S'['Y']),
                  bquote('W'['X']), bquote('W'['Y']))
-      main1 <- bquote(hat('f')[.(names[ch1])]*'(t, '*omega*')')
-      main2 <- bquote(hat('f')[.(names[ch2])]*'(t, '*omega*')')
-      main3 <- bquote(hat(rho)[.(names[ch1])*','*.(names[ch2])]*'(t, '*omega*')')
-      main4 <- bquote(hat(gamma)[.(names[ch1])*','*.(names[ch2])]*'(t, '*omega*')')
-      main5 <- bquote("PDC: "*.(names[ch2])%->%.(names[ch1]))
-      main6 <- bquote("DTF: "*.(names[ch2])%->%.(names[ch1]))
+      main1 <- bquote(hat('f')[.(names[[ch1]])]*'(t, '*omega*')')
+      main2 <- bquote(hat('f')[.(names[[ch2]])]*'(t, '*omega*')')
+      main3 <- bquote(hat(rho)[.(names[[ch1]])*','*.(names[[ch2]])]*'(t, '*omega*')')
+      main4 <- bquote(hat(gamma)[.(names[[ch1]])*','*.(names[[ch2]])]*'(t, '*omega*')')
+      main5 <- bquote("PDC: "*.(names[[ch2]])%->%.(names[[ch1]]))
+      main6 <- bquote("DTF: "*.(names[[ch2]])%->%.(names[[ch1]]))
     }else if(mice){
       x_coord <- seq(0, 1, length.out = n_t - 2*P)
       y_coord <- w 
