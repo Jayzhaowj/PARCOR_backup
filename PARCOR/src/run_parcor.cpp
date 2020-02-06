@@ -4,7 +4,7 @@
 // gen_AR_sample is function of generating sample of AR coefficients.
 // PARCOR_to_AR_fun is function of transforming from PARCOR to AR.
 
-#define ARMA_64BIT_WORD
+
 #include <RcppArmadillo.h>
 #include <Rcpp.h>
 #include "shared/PARCOR_to_AR.hpp"
@@ -38,7 +38,7 @@ Rcpp::List filter(arma::mat F1_fwd,
   arma::dmat mt(n_I2, n_t, arma::fill::zeros);
   arma::dmat Rt(n_I2, n_I2, arma::fill::zeros);
   arma::dmat F1t(n_I, n_I2, arma::fill::zeros);
-  arma::dcube Ct(n_I2, n_I2, n_t);
+  Rcpp::List Ct(n_t);
   arma::dcube Qt(n_I, n_I, n_t);
   arma::mat St_sqp(n_I, n_I, arma::fill::zeros);
   arma::dcube St(n_I, n_I, n_t);
@@ -53,7 +53,7 @@ Rcpp::List filter(arma::mat F1_fwd,
     ubound = n_t;
     lbound = P;
     mt.col(P - 1) = mk_0;
-    Ct.slice(P - 1) = Ck_0; 
+    Ct(P - 1) = Ck_0; 
     St.slice(P - 1) = S_0;
     F1 = F1_bwd;
     yt = F1_fwd;
@@ -75,7 +75,7 @@ Rcpp::List filter(arma::mat F1_fwd,
       St_sqp = arma::sqrtmat_sympd(S_0);
     }else{
       at.col(i) = G * mt.col(i-1);
-      Rt = delta_m * G * Ct.slice(i-1) * arma::trans(G) * delta_m;
+      Rt = delta_m * G * Rcpp::as<arma::mat>(Ct(i-1)) * arma::trans(G) * delta_m;
       Qt.slice(i) = F1t * Rt * arma::trans(F1t) + St.slice(i-1);
       St_sqp = arma::sqrtmat_sympd(St.slice(i-1));
     }
@@ -89,7 +89,7 @@ Rcpp::List filter(arma::mat F1_fwd,
     S_comp += St_sqp * Qt_inv_sq * et * arma::trans(et) * Qt_inv_sq * St_sqp;
     St.slice(i) = (n_0*S_0 + S_comp)/(n_0 + i + 1);
     St.slice(i) = 0.5*St.slice(i) + 0.5*arma::trans(St.slice(i));
-    Ct.slice(i) = Rt - At * Qt.slice(i) * arma::trans(At);
+    Ct(i) = Rt - At * Qt.slice(i) * arma::trans(At);
     mt.col(i) = at.col(i) + At * et;
     if((i >= P) & (i < n_t - P) ){
       arma::vec tmp_ll = dmvnorm(arma::trans(yt.col(i)), ft.col(i), Qt.slice(i), true);
@@ -135,7 +135,7 @@ Rcpp::List filter_smooth(arma::mat F1_fwd,
     int ubound = 0;
     int sign = 1;
     arma::dmat mnt(n_I2, n_t, arma::fill::zeros);
-    arma::cube Cnt(n_I2, n_I2, n_t);
+    Rcpp::List Cnt(n_t);
     arma::dmat F1(n_I, n_t, arma::fill::zeros);
     arma::dmat yt(n_I, n_t, arma::fill::zeros);
     arma::dmat F1_new(n_I, n_t, arma::fill::zeros);
@@ -169,7 +169,7 @@ Rcpp::List filter_smooth(arma::mat F1_fwd,
   
     arma::mat mt = filter_opt["mt"];
     arma::mat at = filter_opt["at"];
-    arma::dcube Ct = filter_opt["Ct"];
+    Rcpp::List Ct = filter_opt["Ct"];
     arma::mat Rt(n_I2, n_I2, arma::fill::zeros);
     arma::cube St = filter_opt["St"];
   
@@ -184,16 +184,16 @@ Rcpp::List filter_smooth(arma::mat F1_fwd,
     // This following part is smoothing.
     // initializing.
     mnt.col(ubound - 1) = mt.col(ubound - 1);
-    Cnt.slice(ubound - 1) = Ct.slice(ubound - 1);
+    Cnt(ubound - 1) = Rcpp::as<arma::mat>(Ct(ubound - 1));
     arma::mat delta_m = arma::diagmat(arma::pow(delta_min, -0.5));
     for(int i = (ubound - 2); i > (lbound - 1); i--){
-        Rt = delta_m * G * Ct.slice(i) * arma::trans(G) * delta_m;
+        Rt = delta_m * G * Rcpp::as<arma::mat>(Ct(i)) * arma::trans(G) * delta_m;
         Rt = 0.5*Rt + 0.5*arma::trans(Rt);
         arma::mat Rtp1_inv = arma::inv_sympd(Rt);
-        arma::mat Bt = Ct.slice(i) * arma::trans(G) * Rtp1_inv;
+        arma::mat Bt = Rcpp::as<arma::mat>(Ct(i)) * arma::trans(G) * Rtp1_inv;
         mnt.col(i) = mt.col(i) + Bt * (mnt.col(i+1) - at.col(i+1));
-        Cnt.slice(i) = Ct.slice(i) - Bt * (Rt - Cnt.slice(i+1))*arma::trans(Bt);
-        Cnt.slice(i) = 0.5*Cnt.slice(i) + 0.5*arma::trans(Cnt.slice(i));
+        Cnt(i) = Rcpp::as<arma::mat>(Ct(i)) - Bt * (Rt - Rcpp::as<arma::mat>(Cnt(i+1)))*arma::trans(Bt);
+        Cnt(i) = 0.5*Rcpp::as<arma::mat>(Cnt(i)) + 0.5*arma::trans(Rcpp::as<arma::mat>(Cnt(i)));
     }
     for(int i = lbound; i < ubound; i++){
         arma::mat F1t = arma::trans(gen_Ft(F1.col(i - sign * m)));
@@ -367,15 +367,16 @@ Rcpp::List  gen_AR_sample(arma::cube phi_fwd,
       arma::mat phi_bwd_sample(n_I2, n_t, arma::fill::zeros);
       arma::mat mnt_fwd = phi_fwd.slice(i);
       arma::mat mnt_bwd = phi_bwd.slice(i);
-      arma::cube Cnt_fwd_cur = Cnt_fwd(i);
-      arma::cube Cnt_bwd_cur = Cnt_bwd(i);
+      Rcpp::List Cnt_fwd_cur = Cnt_fwd(i);
+      Rcpp::List Cnt_bwd_cur = Cnt_bwd(i);
       for(int j = n_t-1; j > (P_max-1); j--){
-
-          phi_fwd_sample.col(j) = arma::trans(rmvnorm(1, mnt_fwd.col(j), Cnt_fwd_cur.slice(j)));
+          arma::mat Cnt_fwd_cur_tmp = Rcpp::as<arma::mat>(Cnt_fwd_cur(j));
+          phi_fwd_sample.col(j) = arma::trans(rmvnorm(1, mnt_fwd.col(j), Cnt_fwd_cur_tmp));
           if(j > (n_t-h-P_max-1)){
             phi_bwd_sample.col(j) = phi_fwd_sample.col(j);
           }else{
-            phi_bwd_sample.col(j) = arma::trans(rmvnorm(1, mnt_bwd.col(j), Cnt_bwd_cur.slice(j)));
+            arma::mat Cnt_bwd_cur_tmp = Rcpp::as<arma::mat>(Cnt_bwd_cur(j));
+            phi_bwd_sample.col(j) = arma::trans(rmvnorm(1, mnt_bwd.col(j), Cnt_bwd_cur_tmp));
           }
       }
         if(i == 0){
