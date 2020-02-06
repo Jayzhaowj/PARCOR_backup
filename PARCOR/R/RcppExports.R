@@ -25,12 +25,12 @@ filter <- function(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, m, delta, type_num, 
     .Call(`_PARCOR_filter`, F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, m, delta, type_num, P, n_t, n_I, n_I2)
 }
 
-filter_smooth <- function(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, m, delta, type_num, P, DIC, sample_size, chains) {
-    .Call(`_PARCOR_filter_smooth`, F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, m, delta, type_num, P, DIC, sample_size, chains)
+filter_smooth <- function(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, m, delta, type_num, P, DIC, sample_size, chains, uncertainty) {
+    .Call(`_PARCOR_filter_smooth`, F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, m, delta, type_num, P, DIC, sample_size, chains, uncertainty)
 }
 
-run_parcor <- function(F1, G, mk_0, Ck_0, n_0, S_0, delta, P, sample_size, chains, DIC, backward) {
-    .Call(`_PARCOR_run_parcor`, F1, G, mk_0, Ck_0, n_0, S_0, delta, P, sample_size, chains, DIC, backward)
+run_parcor <- function(F1, G, mk_0, Ck_0, n_0, S_0, delta, P, sample_size, chains, DIC, backward, uncertainty) {
+    .Call(`_PARCOR_run_parcor`, F1, G, mk_0, Ck_0, n_0, S_0, delta, P, sample_size, chains, DIC, backward, uncertainty)
 }
 
 gen_AR_sample <- function(phi_fwd, phi_bwd, Cnt_fwd, Cnt_bwd, n_I, P_opt, P_max, h) {

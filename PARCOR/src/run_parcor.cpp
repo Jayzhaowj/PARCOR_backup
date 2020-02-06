@@ -251,7 +251,8 @@ Rcpp::List  run_parcor(arma::mat F1,
                        int sample_size,
                        int chains,
                        bool DIC,
-                       bool backward
+                       bool backward, 
+                       bool uncertainty
 ){
     int n_t = F1.n_cols;
     int n_I = F1.n_rows;
@@ -294,23 +295,26 @@ Rcpp::List  run_parcor(arma::mat F1,
         //Rcpp::List tmp_fwd = t1.get();
         //Rcpp::List tmp_bwd = t2.get();
         tmp_fwd = filter_smooth(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, i+1, delta.slice(i), 1, P, DIC,
-                                           sample_size, chains);
+                                           sample_size, chains, uncertainty);
         Rprintf("Forward computation is completed!\n");
         delta_fwd.row(i) = Rcpp::as<arma::mat>(tmp_fwd["delta_min"]);
         if(backward){
             tmp_bwd = filter_smooth(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, i+1, delta_fwd.row(i), -1, P, false,
-                                    sample_size, chains);
+                                    sample_size, chains, uncertainty);
         }else{
             tmp_bwd = filter_smooth(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, i+1, delta.slice(i), -1, P, false,
-                                    sample_size, chains);
+                                    sample_size, chains, uncertainty);
         }
         Rprintf("Backward computation is completed!\n");
         delta_bwd.row(i) = Rcpp::as<arma::mat>(tmp_bwd["delta_min"]);
         ll_DIC(i) = tmp_fwd["ll_DIC"];
         es_DIC(i) = tmp_fwd["ES_mean"];
         
-        Cnt_fwd(i) = tmp_fwd["Cnt"];
-        Cnt_bwd(i) = tmp_bwd["Cnt"];
+        if(uncertainty){
+          Cnt_fwd(i) = tmp_fwd["Cnt"];
+          Cnt_bwd(i) = tmp_bwd["Cnt"];
+        }
+
         //filter_fwd(i) = tmp_fwd["filter_opt"];
         //filter_bwd(i) = tmp_bwd["filter_opt"];
         St_fwd(i) = tmp_fwd["St"];

@@ -108,8 +108,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // filter_smooth
-Rcpp::List filter_smooth(arma::mat F1_fwd, arma::mat F1_bwd, arma::mat G, arma::mat mk_0, arma::mat Ck_0, double n_0, arma::mat S_0, int m, arma::mat delta, int type_num, int P, bool DIC, int sample_size, int chains);
-RcppExport SEXP _PARCOR_filter_smooth(SEXP F1_fwdSEXP, SEXP F1_bwdSEXP, SEXP GSEXP, SEXP mk_0SEXP, SEXP Ck_0SEXP, SEXP n_0SEXP, SEXP S_0SEXP, SEXP mSEXP, SEXP deltaSEXP, SEXP type_numSEXP, SEXP PSEXP, SEXP DICSEXP, SEXP sample_sizeSEXP, SEXP chainsSEXP) {
+Rcpp::List filter_smooth(arma::mat F1_fwd, arma::mat F1_bwd, arma::mat G, arma::mat mk_0, arma::mat Ck_0, double n_0, arma::mat S_0, int m, arma::mat delta, int type_num, int P, bool DIC, int sample_size, int chains, bool uncertainty);
+RcppExport SEXP _PARCOR_filter_smooth(SEXP F1_fwdSEXP, SEXP F1_bwdSEXP, SEXP GSEXP, SEXP mk_0SEXP, SEXP Ck_0SEXP, SEXP n_0SEXP, SEXP S_0SEXP, SEXP mSEXP, SEXP deltaSEXP, SEXP type_numSEXP, SEXP PSEXP, SEXP DICSEXP, SEXP sample_sizeSEXP, SEXP chainsSEXP, SEXP uncertaintySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -127,13 +127,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type DIC(DICSEXP);
     Rcpp::traits::input_parameter< int >::type sample_size(sample_sizeSEXP);
     Rcpp::traits::input_parameter< int >::type chains(chainsSEXP);
-    rcpp_result_gen = Rcpp::wrap(filter_smooth(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, m, delta, type_num, P, DIC, sample_size, chains));
+    Rcpp::traits::input_parameter< bool >::type uncertainty(uncertaintySEXP);
+    rcpp_result_gen = Rcpp::wrap(filter_smooth(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, m, delta, type_num, P, DIC, sample_size, chains, uncertainty));
     return rcpp_result_gen;
 END_RCPP
 }
 // run_parcor
-Rcpp::List run_parcor(arma::mat F1, arma::mat G, arma::mat mk_0, arma::mat Ck_0, double n_0, arma::mat S_0, arma::cube delta, int P, int sample_size, int chains, bool DIC, bool backward);
-RcppExport SEXP _PARCOR_run_parcor(SEXP F1SEXP, SEXP GSEXP, SEXP mk_0SEXP, SEXP Ck_0SEXP, SEXP n_0SEXP, SEXP S_0SEXP, SEXP deltaSEXP, SEXP PSEXP, SEXP sample_sizeSEXP, SEXP chainsSEXP, SEXP DICSEXP, SEXP backwardSEXP) {
+Rcpp::List run_parcor(arma::mat F1, arma::mat G, arma::mat mk_0, arma::mat Ck_0, double n_0, arma::mat S_0, arma::cube delta, int P, int sample_size, int chains, bool DIC, bool backward, bool uncertainty);
+RcppExport SEXP _PARCOR_run_parcor(SEXP F1SEXP, SEXP GSEXP, SEXP mk_0SEXP, SEXP Ck_0SEXP, SEXP n_0SEXP, SEXP S_0SEXP, SEXP deltaSEXP, SEXP PSEXP, SEXP sample_sizeSEXP, SEXP chainsSEXP, SEXP DICSEXP, SEXP backwardSEXP, SEXP uncertaintySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -149,7 +150,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type chains(chainsSEXP);
     Rcpp::traits::input_parameter< bool >::type DIC(DICSEXP);
     Rcpp::traits::input_parameter< bool >::type backward(backwardSEXP);
-    rcpp_result_gen = Rcpp::wrap(run_parcor(F1, G, mk_0, Ck_0, n_0, S_0, delta, P, sample_size, chains, DIC, backward));
+    Rcpp::traits::input_parameter< bool >::type uncertainty(uncertaintySEXP);
+    rcpp_result_gen = Rcpp::wrap(run_parcor(F1, G, mk_0, Ck_0, n_0, S_0, delta, P, sample_size, chains, DIC, backward, uncertainty));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -192,8 +194,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_PARCOR_compute_spec", (DL_FUNC) &_PARCOR_compute_spec, 7},
     {"_PARCOR_filter_smooth_TVVAR", (DL_FUNC) &_PARCOR_filter_smooth_TVVAR, 9},
     {"_PARCOR_filter", (DL_FUNC) &_PARCOR_filter, 14},
-    {"_PARCOR_filter_smooth", (DL_FUNC) &_PARCOR_filter_smooth, 14},
-    {"_PARCOR_run_parcor", (DL_FUNC) &_PARCOR_run_parcor, 12},
+    {"_PARCOR_filter_smooth", (DL_FUNC) &_PARCOR_filter_smooth, 15},
+    {"_PARCOR_run_parcor", (DL_FUNC) &_PARCOR_run_parcor, 13},
     {"_PARCOR_gen_AR_sample", (DL_FUNC) &_PARCOR_gen_AR_sample, 8},
     {"_PARCOR_PAR_to_AR_fun", (DL_FUNC) &_PARCOR_PAR_to_AR_fun, 3},
     {NULL, NULL, 0}
