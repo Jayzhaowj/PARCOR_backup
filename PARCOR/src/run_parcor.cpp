@@ -4,7 +4,7 @@
 // gen_AR_sample is function of generating sample of AR coefficients.
 // PARCOR_to_AR_fun is function of transforming from PARCOR to AR.
 
-
+#define ARMA_64BIT_WORD
 #include <RcppArmadillo.h>
 #include <Rcpp.h>
 #include "shared/PARCOR_to_AR.hpp"
