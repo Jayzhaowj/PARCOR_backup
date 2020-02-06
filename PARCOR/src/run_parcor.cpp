@@ -123,7 +123,8 @@ Rcpp::List filter_smooth(arma::mat F1_fwd,
                          int P,
                          bool DIC,
                          int sample_size,
-                         int chains
+                         int chains, 
+                         bool uncertainty
 ){
   // initializing
     //std::cout << "a1";
@@ -207,8 +208,8 @@ Rcpp::List filter_smooth(arma::mat F1_fwd,
         es_DIC = tmp_DIC["ES_mean"];
     }
     
-    
-    return Rcpp::List::create(Rcpp::Named("F1new") = F1_new,
+    if(uncertainty){
+          return Rcpp::List::create(Rcpp::Named("F1new") = F1_new,
                               Rcpp::Named("mnt") = mnt,
                               Rcpp::Named("Cnt") = Cnt,
                               Rcpp::Named("ll_max") = ll_max,
@@ -218,6 +219,19 @@ Rcpp::List filter_smooth(arma::mat F1_fwd,
                               Rcpp::Named("St") = St,
                               Rcpp::Named("ES_mean") = es_DIC,
                               Rcpp::Named("ll_DIC") = ll_DIC);
+        }else{
+                    return Rcpp::List::create(Rcpp::Named("F1new") = F1_new,
+                              Rcpp::Named("mnt") = mnt,
+                              //Rcpp::Named("Cnt") = Cnt,
+                              Rcpp::Named("ll_max") = ll_max,
+                              Rcpp::Named("delta_min") = delta_min,
+                              //Rcpp::Named("filter_opt") = filter_opt,
+                              Rcpp::Named("ll") = ll,
+                              Rcpp::Named("St") = St,
+                              Rcpp::Named("ES_mean") = es_DIC,
+                              Rcpp::Named("ll_DIC") = ll_DIC);
+        }
+
     
     
 }
