@@ -24,7 +24,7 @@ Rcpp::List compute_DIC(Rcpp::List temp_filter, int sample_size, int i, int P, in
     // retrieve the values
     arma::mat at = temp_filter["at"];
     arma::mat mt = temp_filter["mt"];
-    arma::dcube Ct = temp_filter["Ct"];
+    Rcpp::List Ct = temp_filter["Ct"];
     arma::mat F1 = temp_filter["F1"];
     arma::mat ft = temp_filter["ft"];
     arma::mat yt = temp_filter["yt"];
@@ -40,7 +40,8 @@ Rcpp::List compute_DIC(Rcpp::List temp_filter, int sample_size, int i, int P, in
         arma::mat F1t = arma::trans(gen_Ft(F1.col(j - (i+1))));
         arma::vec tmp_ll = dmvnorm(arma::trans(yt.col(j)), ft.col(j), Qt.slice(j), true);
         ll += arma::sum(tmp_ll);
-        arma::mat sample_at = rmvnorm(sample_size, at.col(j), Ct.slice(j));
+        arma::mat Ct_tmp = Rcpp::as<arma::mat>(Ct(j));
+        arma::mat sample_at = rmvnorm(sample_size, at.col(j), Ct_tmp);
         arma::mat sample_ft = F1t * arma::trans(sample_at);
         arma::mat ll_sim(sample_size, chains, arma::fill::zeros);
        #pragma omp parallel for num_threads(chains)
