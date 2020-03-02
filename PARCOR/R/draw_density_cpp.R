@@ -10,9 +10,10 @@
 
 
 draw.density <- function(phi, SIGMA, start = 0.001, end = 0.499, interval = 0.01,
-                         P_max, target_dir, dir_name, ch1 = 1, ch2 = 2, 
+                         P_max, n_t, target_dir, dir_name, ch1 = 1, ch2 = 2, 
                          which.type = "all", plot = FALSE, xlab = 'time', est = TRUE,
-                         ylab = 'frequency', eeg = FALSE, wind = FALSE, mice = FALSE, time_depend = TRUE, ...){
+                         ylab = 'frequency', eeg = FALSE, wind = FALSE, mice = FALSE,
+                         time_depend = TRUE, ...){
   ## which.type is string control which type of plot to plot. 
   ## which.type can be 'all', 'sd1', 'sd2', 'coh' and 'pcoh', 
   ## 'all': all plots, 
