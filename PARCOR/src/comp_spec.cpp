@@ -88,8 +88,7 @@ arma::mat get_sd(Rcpp::List sd, int ts1, int ts2, int type){
     // Compute log spectral density of time series 1
     if(type == 1){
         for(int i = 0; i < n_t; i++){
-            Rcpp::List tmp = Rcpp::as<Rcpp::List>(sd["sd"]);
-            f_sd = Rcpp::as<arma::cx_cube>(tmp(i));
+            f_sd = Rcpp::as<arma::cx_cube>(sd(i));
             for(int j = 0; j < n_w; j++){
                 f_spec = abs(f_sd.slice(j));
                 sd_tf(i, j) = log(f_spec(ts1-1, ts1-1));
@@ -100,8 +99,7 @@ arma::mat get_sd(Rcpp::List sd, int ts1, int ts2, int type){
     //
     if(type == 2){
         for(int i = 0; i < n_t; i++){
-            Rcpp::List tmp = Rcpp::as<Rcpp::List>(sd["sd"]);
-            f_sd = Rcpp::as<arma::cx_cube>(tmp(i));
+            f_sd = Rcpp::as<arma::cx_cube>(sd(i));
             for(int j = 0; j < n_w; j++){
                 f_spec = abs(f_sd.slice(j));
                 sd_tf(i, j) = (f_spec(ts1-1, ts2-1)*f_spec(ts1-1, ts2-1))/(f_spec(ts1-1, ts1-1)*f_spec(ts2-1, ts2-1));
@@ -111,8 +109,7 @@ arma::mat get_sd(Rcpp::List sd, int ts1, int ts2, int type){
     
     if(type == 3){
         for(int i = 0; i < n_t; i++){
-            Rcpp::List tmp = Rcpp::as<Rcpp::List>(sd["sd"]);
-            f_sd = Rcpp::as<arma::cx_cube>(tmp(i));
+            f_sd = Rcpp::as<arma::cx_cube>(sd(i));
             for(int j = 0; j < n_w; j++){
                 g_spec = abs(inv(f_sd.slice(j)));
                 sd_tf(i, j) = (g_spec(ts1-1, ts2-1)*g_spec(ts1-1, ts2-1))/(g_spec(ts1-1, ts1-1)*g_spec(ts2-1, ts2-1));
@@ -122,18 +119,7 @@ arma::mat get_sd(Rcpp::List sd, int ts1, int ts2, int type){
 
     if(type == 4){
         for(int i = 0; i < n_t; i++){
-            Rcpp::List tmp = Rcpp::as<Rcpp::List>(sd["PDC"]);
-            f_sd = Rcpp::as<arma::cx_cube>(tmp(i));
-            for(int j = 0; j < n_w; j++){
-                f_spec = abs(f_sd.slice(j));
-                sd_tf(i, j) = f_spec(ts1-1, ts2-1);
-            }
-        }
-    }
-    if(type == 5){
-        for(int i = 0; i < n_t; i++){
-            Rcpp::List tmp = Rcpp::as<Rcpp::List>(sd["DTF"]);
-            f_sd = Rcpp::as<arma::cx_cube>(tmp(i));
+            f_sd = Rcpp::as<arma::cx_cube>(sd(i));
             for(int j = 0; j < n_w; j++){
                 f_spec = abs(f_sd.slice(j));
                 sd_tf(i, j) = f_spec(ts1-1, ts2-1);
