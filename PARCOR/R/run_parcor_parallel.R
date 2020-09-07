@@ -7,7 +7,7 @@ run_parcor_parallel <- function(F1, G, mk_0, Ck_0, n_0, S_0, delta,
   n_t <- ncol(F1)
   n_I <- nrow(F1)
   n_I2 <- nrow(G)
-  n_delta <- nrow(delta[, , 1])
+  n_delta <- nrow(delta[, , 1, drop = FALSE])
   sfInit(parallel = TRUE, cpus = 2, type = "SOCK")
   sfLibrary(PARCOR)
   F1_fwd <- F1
