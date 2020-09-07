@@ -31,7 +31,7 @@ run_parcor_parallel <- function(F1, G, mk_0, Ck_0, n_0, S_0, delta,
   sfExportAll()
   for(i in 1:P){
     sfExport("F1_fwd", "F1_bwd", "i")
-    res <- sfLapply(x = c(1, 0), fun = function(x) filter_smooth(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, i, delta[, , i, drop = FALSE], 
+    res <- sfLapply(x = c(1, 0), fun = function(x) filter_smooth(F1_fwd, F1_bwd, G, mk_0, Ck_0, n_0, S_0, i, as.matrix(delta[, , i]), 
                                                                   x, P, x, sample_size, chains, uncertainty))
     tmp_fwd <- res[[1]]
     tmp_bwd <- res[[2]]
